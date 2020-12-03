@@ -1,9 +1,9 @@
 import { HttpClientModule } from '@angular/common/http';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
-import { asyncData } from '../../test';
+import { asyncData, asyncError } from '../../test';
 import { PeopleService } from '../shared/people.service';
 import { HomeComponent } from './home.component';
 
@@ -39,7 +39,7 @@ const fakePerson = {
   managerId: '5763cd4d3b57c672861bfa1f'
 };
 
-describe('Test Home Component', () => {
+fdescribe('Test Home Component', () => {
 
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
@@ -61,47 +61,67 @@ describe('Test Home Component', () => {
     peopleService = TestBed.inject(PeopleService);
   });
 
-  it('should be created', () => {
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
-  });
 
-  it('should not display cards if person is null', () => {
+  // NOT SYNC
+  it('NUMBER 0: should call fetch random person on Init and display it', () => {
     component.person = null;
-    fixture.detectChanges(); // ngOnInit
-    expect(debugElement.query(By.css('pwa-card'))).toBeFalsy();
-    component.person = {};
-    fixture.detectChanges(); // update view
-    expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
-  });
-
-  it('should call fetchRandom when click on autorenew', () => {
     const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(of(fakePerson));
     fixture.detectChanges(); // ngOnInit
     expect(fetchRandomSpy).toHaveBeenCalled();
-    expect(component).toBeTruthy();
-    debugElement
-        .query(By.css('[data-id=button-1]'))
-        .triggerEventHandler('click', {button : 0});
-    expect(fetchRandomSpy).toHaveBeenCalledTimes(2);
+    expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
   });
 
-  it('should call delete when card triggers a personDelete event', () => {
-    component.person.id = 'fakeId';
-    const deleteSpy = spyOn(peopleService, 'delete').and.returnValue(of([]));
+  // FIX THIS ASYNC TEST
+  it('NUMBER 1: waitForAsync (should call fetch random person on Init and display it)', waitForAsync(() => {
+    component.person = null;
+    const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson));
     fixture.detectChanges(); // ngOnInit
-    debugElement.query(By.css('pwa-card')).triggerEventHandler('personDelete', null);
-    expect(deleteSpy).toHaveBeenCalledWith(component.person.id);
-  });
+    fixture.whenStable().then(() => {
+        expect(fetchRandomSpy).toHaveBeenCalled();
+        expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
+    });
+  }));
 
-  it('should call fetch random person on Init and display it (async)', waitForAsync(() => {
+  // FIX THIS ASYNC TEST
+  it('NUMBER 2: fakeAsync (should call fetch random person on Init and display it)', fakeAsync(() => {
+    component.person = null;
+    const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson));
+    fixture.detectChanges(); // ngOnInit
+    expect(fetchRandomSpy).toHaveBeenCalled();
+    expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
+  }));
+
+  // FIX THIS ASYNC TEST
+  it('NUMBER 3: waitForAsync 10s (should call fetch random person on Init and display it)', waitForAsync(() => {
       component.person = null;
-      const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson));
+      const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson, 10000));
       fixture.detectChanges(); // ngOnInit
       fixture.whenStable().then(() => {
           fixture.detectChanges(); // updateView after async code is executed
           expect(fetchRandomSpy).toHaveBeenCalled();
           expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
       });
+  }));
+
+  // FIX THIS ASYNC TEST
+  it('NUMBER 4: fakeAsync 10s (should call fetch random person and display error) (FakeAsync)', fakeAsync(() => {
+    component.person = null;
+    const onErrorMethodSpy = spyOn(component, 'onError');
+    const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson, 10000));
+    fixture.detectChanges(); // ngOnInit
+    tick();
+    fixture.detectChanges(); // updateView after async code is executed
+    expect(fetchRandomSpy).toHaveBeenCalled();
+    expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
+  }));
+
+  // FIX THIS ASYNC TEST
+  it('NUMBER 5: should call fetch random person and display error (FakeAsync)', fakeAsync(() => {
+    component.person = null;
+    const componentOnErrorSpy = spyOn(component, 'onError');
+    const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncError({}));
+    fixture.detectChanges(); // ngOnInit
+    expect(fetchRandomSpy).toHaveBeenCalled();
+    expect(componentOnErrorSpy).toHaveBeenCalled();
   }));
 });

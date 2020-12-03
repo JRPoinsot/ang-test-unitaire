@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { PeopleService } from './people.service';
 
-fdescribe('Test People Service', () => {
+describe('Test People Service', () => {
   let service: PeopleService;
   let httpTestingController: HttpTestingController;
 

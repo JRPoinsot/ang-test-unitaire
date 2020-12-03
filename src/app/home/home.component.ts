@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {PeopleService} from '../shared/people.service';
-import {mergeMap} from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
+import { PeopleService } from '../shared/people.service';
 
 @Component({
   selector: 'pwa-home',
@@ -16,12 +16,18 @@ export class HomeComponent implements OnInit {
    * OnInit implementation
    */
   ngOnInit() {
-    this.peopleService.fetchRandom().subscribe(person => (this.person = person));
+    this.peopleService.fetchRandom().subscribe(person => (this.person = person), () => {
+      this.onError();
+    });
   }
 
   delete(personId: string): void {
     this.peopleService.delete(personId)
       .pipe(mergeMap(() => this.peopleService.fetchRandom()))
       .subscribe(person => (this.person = person));
+  }
+
+  onError() {
+    console.error('Error occurs !');
   }
 }

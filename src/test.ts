@@ -28,8 +28,16 @@ __karma__.start();
 
 /** Create async observable that emits-once and completes
  *  after a JS engine turn */
-export function asyncData<T>(data: T) {
-    return defer(() => Promise.resolve(data));
+export function asyncData<T>(data: T, delay?: number) {
+    return defer(() => new Promise<T>(resolve => {
+        if (delay) {
+            setTimeout(() => {
+                resolve(data);
+            }, delay);
+        } else {
+            resolve(data);
+        }
+    }));
 }
 
 /** Create async observable error that errors
