@@ -39,7 +39,7 @@ const fakePerson = {
   managerId: '5763cd4d3b57c672861bfa1f'
 };
 
-fdescribe('Test Home Component', () => {
+describe('Test Home Component', () => {
 
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
