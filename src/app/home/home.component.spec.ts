@@ -61,7 +61,6 @@ fdescribe('Test Home Component', () => {
     peopleService = TestBed.inject(PeopleService);
   });
 
-
   // NOT SYNC
   it('NUMBER 0: should call fetch random person on Init and display it', () => {
     component.person = null;
@@ -71,30 +70,33 @@ fdescribe('Test Home Component', () => {
     expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
   });
 
-  // FIX THIS ASYNC TEST
+  //
   it('NUMBER 1: waitForAsync (should call fetch random person on Init and display it)', waitForAsync(() => {
     component.person = null;
     const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson));
     fixture.detectChanges(); // ngOnInit
     fixture.whenStable().then(() => {
         expect(fetchRandomSpy).toHaveBeenCalled();
+        fixture.detectChanges(); // updateView after async code is executed
         expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
     });
   }));
 
-  // FIX THIS ASYNC TEST
+  //
   it('NUMBER 2: fakeAsync (should call fetch random person on Init and display it)', fakeAsync(() => {
     component.person = null;
     const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson));
     fixture.detectChanges(); // ngOnInit
+    tick();
+    fixture.detectChanges(); // updateView after async code is executed
     expect(fetchRandomSpy).toHaveBeenCalled();
     expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
   }));
 
-  // FIX THIS ASYNC TEST
+  // wait 4 second in execution :'( ==> prefere fake async tick
   it('NUMBER 3: waitForAsync 10s (should call fetch random person on Init and display it)', waitForAsync(() => {
       component.person = null;
-      const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson, 10000));
+      const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson, 4000));
       fixture.detectChanges(); // ngOnInit
       fixture.whenStable().then(() => {
           fixture.detectChanges(); // updateView after async code is executed
@@ -103,13 +105,13 @@ fdescribe('Test Home Component', () => {
       });
   }));
 
-  // FIX THIS ASYNC TEST
+  //
   it('NUMBER 4: fakeAsync 10s (should call fetch random person and display error) (FakeAsync)', fakeAsync(() => {
     component.person = null;
     const onErrorMethodSpy = spyOn(component, 'onError');
     const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncData(fakePerson, 10000));
     fixture.detectChanges(); // ngOnInit
-    tick();
+    tick(10000);
     fixture.detectChanges(); // updateView after async code is executed
     expect(fetchRandomSpy).toHaveBeenCalled();
     expect(debugElement.query(By.css('pwa-card'))).toBeTruthy();
@@ -122,6 +124,7 @@ fdescribe('Test Home Component', () => {
     const fetchRandomSpy = spyOn(peopleService, 'fetchRandom').and.returnValue(asyncError({}));
     fixture.detectChanges(); // ngOnInit
     expect(fetchRandomSpy).toHaveBeenCalled();
+    tick();
     expect(componentOnErrorSpy).toHaveBeenCalled();
   }));
 });
