@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject } from 'rxjs';
-import { CardComponent } from '../shared/card';
+import { CardComponent } from '../shared';
 import { PeopleService } from '../shared/people.service';
 import { PeopleComponent } from './people.component';
 import Spy = jasmine.Spy;
@@ -109,7 +109,7 @@ const fakePeopleList = [
     }
 ];
 
-fdescribe('Test People Component', () => {
+describe('Test People Component', () => {
 
     let component: PeopleComponent;
     let fixture: ComponentFixture<PeopleComponent>;

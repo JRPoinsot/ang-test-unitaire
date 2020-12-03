@@ -1,8 +1,7 @@
-import { Component, OnInit, Output, Input, EventEmitter, OnChanges } from '@angular/core';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Person } from '../../model/person.model';
 
-import { CustomValidators } from './custom-validators';
-import {Person} from '../../model/person.model';
 
 @Component({
     selector: 'pwa-form',
@@ -11,7 +10,7 @@ import {Person} from '../../model/person.model';
 })
 export class FormComponent implements OnInit, OnChanges {
 
-    private form: FormGroup;
+    public form: FormGroup;
     @Input() model: any;
     isUpdateMode: boolean;
 
