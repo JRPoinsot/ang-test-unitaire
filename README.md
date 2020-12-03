@@ -1,6 +1,10 @@
-# AngularPwa
+# AngularTu
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.1.
+
+## Simulate back-end embedded server
+
+Run `npm run server` for starting the node.js backend.
 
 ## Development server
 
