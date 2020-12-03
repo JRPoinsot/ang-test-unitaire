@@ -1,7 +1,7 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {AddDialogComponent} from './add-dialog.component';
-import {NO_ERRORS_SCHEMA} from '@angular/core';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { AddDialogComponent } from './add-dialog.component';
 
 describe('Test AddDialog Component', () => {
   let component: AddDialogComponent;

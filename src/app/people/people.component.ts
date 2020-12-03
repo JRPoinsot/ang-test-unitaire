@@ -1,11 +1,11 @@
-import { mergeMap } from 'rxjs/operators';
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { AddDialogComponent } from './add-dialog/add-dialog.component';
-import { PeopleService } from '../shared/people.service';
-import { Person } from '../model/person.model';
 import { Subscription } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { Person } from '../model/person.model';
+import { PeopleService } from '../shared/people.service';
+import { AddDialogComponent } from './add-dialog/add-dialog.component';
+
 
 @Component({
   selector: 'pwa-people',
@@ -35,9 +35,7 @@ export class PeopleComponent implements OnInit, OnDestroy {
   }
 
   delete(person: Person) {
-    this.peopleService.delete(person.id).pipe(
-      mergeMap(() => this.peopleService.fetch())
-    )
+    this.peopleService.delete(person.id)
     .subscribe(people => this.people = people);
   }
 
@@ -46,7 +44,6 @@ export class PeopleComponent implements OnInit, OnDestroy {
         .pipe(mergeMap(() => this.peopleService.fetch()))
         .subscribe(people => {
           this.people = people;
-          this.hideDialog();
         });
   }
 
@@ -63,11 +60,6 @@ export class PeopleComponent implements OnInit, OnDestroy {
         this.add(person);
       }
     });
-  }
-
-  hideDialog() {
-    this.dialogStatus = 'inactive';
-    this.addDialog.close();
   }
 
   trackByFn(index: number, item: Person) {
