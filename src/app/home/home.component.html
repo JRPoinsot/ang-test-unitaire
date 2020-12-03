@@ -1,0 +1,6 @@
+<section>
+    <pwa-card *ngIf="person" [person]="person" (personDelete)="delete(person.id)">
+    </pwa-card>
+</section>
+
+<button mat-fab (click)="ngOnInit()"><i class="material-icons">autorenew</i></button>
